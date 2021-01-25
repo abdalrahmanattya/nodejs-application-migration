@@ -19,7 +19,7 @@ The purpose of this repository is to provide the deliverables of the assignment 
 	 - [Application Architecture - Security](#Application-Architecture---Security)
 	 - [Application Architecture - Disaster Recovery Plan](#Application-Architecture---Disaster-Recovery-Plan)
 	 - [Application Architecture - Pricing Example](#Application-Architecture---Pricing-Example)
-- [AWS Elasticsearch](#[AWS-Elasticsearch)
+- [AWS Elasticsearch](#AWS-Elasticsearch)
 	 - [Elasticsearch - Logs Ingestion](#Elasticsearch---Logs-Ingestion)
 	 - [Elasticsearch - Accounts Architecture](#Elasticsearch---Accounts-Architecture)
 	 - [Elasticsearch - Architecture](#Elasticsearch---Architecture)
