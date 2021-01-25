@@ -87,7 +87,7 @@ One of the biggest advantages of leveraging serverless is that we don't need to 
 ### Application Architecture - Environments
 In order to achieve separation between environments , we will deploy each environment in a separate AWS account
 #### Accounts Architecture
-It's a best practice to implement AWS Landing Zone to set up multi-account AWS environment but for simplicity, I will consider have the below architecture with AWS organizations enabled on the ROOT account.
+It's a best practice to implement AWS Landing Zone to set up multi-account AWS environment but for simplicity, I will consider that we have the below architecture implemented with AWS organizations enabled on the ROOT account.
 
 ![](diagrams/accounts-architecture.png)
 ### Environments Architecture
@@ -201,3 +201,36 @@ START - 08/01
 - IaC => Started 22/01
 
 END - 26/01 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
