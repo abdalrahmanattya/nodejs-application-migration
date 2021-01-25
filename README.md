@@ -125,8 +125,10 @@ By configuring failover policy on Route53 to failover to the secondary region up
 
 **The total monthly cost for running the application will be 201.7$**
 ## AWS Elasticsearch
-### Elasticsearch - Accounts Architecture
+Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy, secure, and run Elasticsearch cost effectively at scale.
 
+The service provides support for open source Elasticsearch APIs, managed Kibana, integration with Logstash
+### Elasticsearch - Accounts Architecture
 ![](diagrams/organisation-logs-collection.png)
 ### Elasticsearch - Logs Ingestion
 ![](diagrams/elasticsearch-logs-collection.png)
