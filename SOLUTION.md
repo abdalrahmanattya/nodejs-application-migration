@@ -105,6 +105,7 @@ By applying minimal configuration and requesting quotas increase, we can scale t
 - Encryption in transit using SSL and at rest using KMS or AWS managed keys.
 - Resource Policy to allow access to the permitted entities only.
 - Optionally, we can leverage AWS Config and Gaurd Duity for resources configuration compliance check and remediation, and threat detection.
+- Enable CloudTrail log file integrity validation. 
 
 ![](diagrams/application-architecture-security.png)
 ### Application Architecture - Disaster Recovery Plan
