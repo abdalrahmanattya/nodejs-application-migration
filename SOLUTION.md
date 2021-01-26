@@ -101,7 +101,7 @@ By applying minimal configuration and requesting quotas increase, we can scale t
 - AWS WAF is be used for creating security rules that block common attack patterns, such as SQL injection or cross-site scripting, and rules that filter out specific traffic patterns we define. 
 - Turn on AWS Trusted Advisor for real time guidance on security, cost optimization, performance, service limits and fault tolerance.
 - Enable Orgin Access Identity on CloudFront.
-- Authentication layer to be added using AWS Cognito.
+- Authentication layer to be added using AWS Cognito is recommended but it's not required for this use case.
 - Encryption in transit using SSL and at rest using KMS or AWS managed keys.
 - Resource Policy to allow access to the permitted entities only.
 - Optionally, we can leverage AWS Config and Gaurd Duity for resources configuration compliance check and remediation, and threat detection.
