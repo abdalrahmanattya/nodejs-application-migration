@@ -136,8 +136,13 @@ The trail is configured to store the trails in s3 bucket in Logs & monitoring ac
 
 ![](diagrams/organisation-logs-collection.png)
 ### Elasticsearch - Logs Ingestion
+In each account, the application and infrastructure logs is pushed to CloudWatch which has which has subscription filter enabled to ingest the logs into ES cluster in Logs & monitoring account using cross account access.
 ![](diagrams/elasticsearch-logs-collection.png)
 ### Elasticsearch - Architecture
+AWS ES is deployed in private subnets with no internet in/out access. 
+
+To meet the requirement of accessing the dashboard from the headquarter only, a site to site VPN is configured to allow access to the Kibana dashboard.
+
 ![](diagrams/elasticsearch-architecture.png)
 ### Elasticsearch - Pricing Example
 - Logs Collection:
