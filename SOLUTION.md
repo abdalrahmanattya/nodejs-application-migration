@@ -130,6 +130,7 @@ Amazon Elasticsearch Service is a fully managed service that makes it easy for y
 The service provides support for open source Elasticsearch APIs, managed Kibana, integration with Logstash
 ### Elasticsearch - Accounts Architecture
 Note: It's a best practice to have a dedicated AWS account for storing the logs but for simplicity I am considering having the ES cluster in the same account.
+
 A CloudTrail trail is created in the root account and enabled for all accounts inside the organization.
 The trail is configured to store the trails in s3 bucket in Logs & monitoring account and it push the logs to Cloudwatch which has subscription filter enabled to ingest the logs into ES cluster in Logs & monitoring account.
 
