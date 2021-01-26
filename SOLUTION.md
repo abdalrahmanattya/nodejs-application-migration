@@ -51,7 +51,7 @@ In order to reach the best transformation model, we need to identify:
 ### Current Architecture
 A web application that consist of NodeJs, MongoDB, FTP,  NGINX Reverse Proxy and Cron Server.  All running on self-managed inhouse VMs.
 ### Assumptions
-- Stateless E-Commerce website with a traffic average of 2 million per month.
+- Stateless E-Commerce website with a monthly traffic average of 2 million active users.
 - Users can browse and buy the products without login.
 - SLA of 99.5%. RTO of 30 minutes and RPO of 30 minutes.
 ### What Fits the Best?
