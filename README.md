@@ -34,10 +34,10 @@ The deliverables in github won't include detailed information about why I have t
 
 ## Client Requirements
 General Requirements:
-- Scalability.
-- Flexibility.
-- Utilization Managed Services. 
-- Cost Optimization.
+- Scalability
+- Flexibility
+- Utilization Managed Services
+- Cost Optimization
 
 Specific Requirements:
 - Environments Isolation
