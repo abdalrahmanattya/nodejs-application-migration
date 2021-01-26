@@ -131,7 +131,7 @@ The service provides support for open source Elasticsearch APIs, managed Kibana,
 ### Elasticsearch - Accounts Architecture
 Note: It's a best practice to have a dedicated AWS account for storing the logs but for simplicity I am considering having the ES cluster in the same account.
 
-A CloudTrail trail is created in the root account and enabled for all accounts inside the organization.
+A CloudTrail trail configured for management and data events is created in the root account and enabled for all accounts inside the organization.
 The trail is configured to store the trails in s3 bucket in Logs & monitoring account and it push the logs to Cloudwatch which has subscription filter enabled to ingest the logs into ES cluster in Logs & monitoring account.
 
 ![](diagrams/organisation-logs-collection.png)
