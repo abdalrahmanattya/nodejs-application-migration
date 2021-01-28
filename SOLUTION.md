@@ -31,7 +31,7 @@ The purpose of this repository is to provide the deliverables of the assignment 
 	- [Deploy](#Deploy)
 - [Time Log & Followed Processes](#Time-Log-&-Followed-Processes)
 ## Overview
-The solution of the assignment is divided between the deliverables in gitub and the presentation.
+The solution of the assignment is divided between the deliverables in github and the presentation.
 The deliverables in github will include less detailed information about why I have taken a certain decision or chosen a service/tool/design over another. Instead, this information will be kept for the presentation.
 
 ## Client Requirements
