@@ -187,6 +187,7 @@ This application provide an interface to perform CRUD operations against dynamod
 
 ![](diagrams/app.gif)
 
+**You can access a working version from the application in this [Link](http://abdu-test-web-app-2021.s3-website-eu-west-1.amazonaws.com"Link")** 
 ### Architecture
 Each child stack represent a layer of the application design:
 - Network ‘for ES cluster’
@@ -197,10 +198,17 @@ Each child stack represent a layer of the application design:
 
 **The Fifth stack build and deploy the application code by using cloudformation custom resource and helper script.**
 
-
-
 The network resources aren’t in use. It’s just for demonstration purposes.
+
 ![](diagrams/iacv2.png)
+### Deploy
+In order to deploy the application using cloudformation, you only to download and deploy this [template](https://raw.githubusercontent.com/abdalrahmanattya/sentia-assignment/main/code/cloudformation/sentia-iac-parent-stack.yml"template")** 
+
+Once the stack is complete, click the website url from the output section of the template.
+
+Everything should work perfectly. 
+
+Don't forget to terminate the stack.
 
 ## Time Log & Followed Processes
 Please Note That:
