@@ -175,19 +175,31 @@ AWS Batch dynamically provisions the optimal quantity and type of compute resour
 ![](diagrams/batch.PNG)
 
 ## IaC
-In this IaC MVP demo, we will review CloudFormation nested stack concept by deploying four child stacks using a parent stack.
+In this IaC MVP demo, we will review CloudFormation nested stack and custom resources concept by deploying five child stacks using a parent stack.
 
-Each child stack will represent a layer of the application design:
+**Please note that I have resued an application logic from someone github public repo that can be found [Here](https://github.com/eh3rrera/react-app-frontend "Link")** 
+
+What I have done is that I have written the cloudformation templates to deploy this application using serverless architecture.
+
+The application consist of a single-page application made with React and Redux. 
+
+This application provide an interface to perform CRUD operations against dynamodb tables that represent courses catalog. This is how it looks like:
+
+![](diagrams/app.gif)
+
+### Architecture
+Each child stack represent a layer of the application design:
 - Network ‘for ES cluster’
 - Frontend ‘S3 only’
 - Backend - logic
+- Backend - API
 - Backend - database ‘stack policy’
 
-Application consist of a single page hosted in S3. On this page we can create and get items on/from DynamoDB.
+**The Fifth stack build and deploy the application code by using cloudformation custom resource and helper script.**
+
+
 
 The network resources aren’t in use. It’s just for demonstration purposes.
-### Architecture
-
 ![](diagrams/iacv2.png)
 
 ## Time Log & Followed Processes
@@ -213,7 +225,7 @@ START - 08/01
 - Presentation  => Started 20/01
 - IaC => Started 22/01
 
-END - 26/01 
+END - 28/01 
 
 
 
