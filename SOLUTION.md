@@ -202,7 +202,7 @@ The network resources aren’t in use. It’s just for demonstration purposes.
 
 ![](diagrams/iacv2.png)
 ### Deploy
-In order to deploy the application using cloudformation, you only to download and deploy this [template](https://raw.githubusercontent.com/abdalrahmanattya/sentia-assignment/main/code/cloudformation/sentia-iac-parent-stack.yml"template")** 
+In order to deploy the application using cloudformation, you only to download and deploy this [template](https://raw.githubusercontent.com/abdalrahmanattya/sentia-assignment/main/code/cloudformation/sentia-iac-parent-stack.yml "template")** 
 
 Once the stack is complete, click the website url from the output section of the template.
 
