@@ -27,7 +27,7 @@ def create(event, context):
     To return a failure to CloudFormation simply raise an exception, the exception message will be sent to CloudFormation Events.
     """
     logger.info("Loading sample Data to DynamoDb")
-    dynamodb = boto3.client('dynamodb')
+    #Load dummy data into dynamodb
     courses_items= [['Python','Python','','Lima-Lucas','3','Programming'],['Java','Java','','Noah-Jack','3','Programming'],['Nodejs','Nodejs','','Michael-Oliver','2','Programming'],['Go','Go','','Martin-Simon','4','Programming'],['C','C','','Joseph-Mason','6','Programming']]
     authors_items= [['Lima-Lucas','Lima','Lucas'],['Noah-Jack','Noah','Jack'],['Oliver-Ben','Oliver','Ben'],['Michael-Oliver','Michael','Oliver'],['Joseph-Mason','Joseph','Mason'],['Martin-Simon','Martin','Simon']]
     for item in authors_items:
@@ -35,6 +35,7 @@ def create(event, context):
     for item in courses_items:
         dynamodb.put_item(TableName='courses', Item={'id':{'S':item[0]},'title':{'S':item[1]},'watchHref':{'S':item[2]},'authorId':{'S':item[3]},'length':{'S':item[4]},'category':{'S':item[5]}})
     logger.info("loading sample Data to DynamoDb has been completed")
+    #upload static content to s3 bucket
     logger.info("loading static website files to s3")
     src_bucket_name = 'attya-public-files-shared-2021'
     src_prefix = ''
@@ -47,7 +48,6 @@ def create(event, context):
         # replace the prefix
         new_obj = dest_bucket.Object(obj.key)
         new_obj.copy(old_source)
-
     #modify js file with the correct api endpoint
     s3_client.download_file(s3_bucket_name, 'static/js/main.5feaed36.js', '/tmp/main.5feaed36.js')
     #read input file
@@ -87,6 +87,8 @@ def delete(event, context):
     
     To return a failure to CloudFormation simply raise an exception, the exception message will be sent to CloudFormation Events.
     """
+    #delete all objects from s3 buckets.
+    #gets triggered when deleteing the stack
     bucket = s3.Bucket(s3_bucket_name)
     bucket.objects.all().delete()
     return
