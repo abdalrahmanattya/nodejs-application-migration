@@ -188,7 +188,7 @@ Application consist of a single page hosted in S3. On this page we can create an
 The network resources aren’t in use. It’s just for demonstration purposes.
 ### Architecture
 
-![](diagrams/iac.png)
+![](diagrams/iacv2.png)
 
 ## Time Log & Followed Processes
 Please Note That:
