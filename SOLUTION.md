@@ -26,7 +26,9 @@ The purpose of this repository is to provide the deliverables of the assignment 
 	 - [Elasticsearch - Pricing Example](#Elasticsearch---Pricing-Example)
 - [CRON Jobs](#CRON-Jobs)
 	 - [AWS Batch](#AWS-Batch)
-- [IaC MVP Architecture](#IaC)
+- [IaC MVP](#IaC)
+	- [Architecture](#Architecture)
+	- [Deploy](#Deploy)
 - [Time Log & Followed Processes](#Time-Log-&-Followed-Processes)
 ## Overview
 The solution of the assignment is divided between the deliverables in gitub and the presentation.
@@ -196,19 +198,19 @@ Each child stack represent a layer of the application design:
 - Backend - API
 - Backend - database ‘stack policy’
 
-**The Fifth stack build and deploy the application code by using cloudformation custom resource and helper script.**
+**The sixth stack build and deploy the application code by using cloudformation custom resource and helper script.**
 
 The network resources aren’t in use. It’s just for demonstration purposes.
 
 ![](diagrams/iacv2.png)
 ### Deploy
-In order to deploy the application using cloudformation, you only to download and deploy this [template](https://raw.githubusercontent.com/abdalrahmanattya/sentia-assignment/main/code/cloudformation/sentia-iac-parent-stack.yml "template")** 
+In order to deploy the application using cloudformation, you need to download and deploy this [template](https://raw.githubusercontent.com/abdalrahmanattya/sentia-assignment/main/code/cloudformation/sentia-iac-parent-stack.yml "template")** 
 
-Once the stack is complete, click the website url from the output section of the template.
+Once the stack is complete, click the website url in the output section of the template.
 
-Everything should work perfectly. 
+Everything should work fine. 
 
-Don't forget to terminate the stack.
+terminate the stack.
 
 ## Time Log & Followed Processes
 Please Note That:
