@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template deploy and configure the s3 bucket that will host the web application
+Parameters: 
+  S3BucketName:
+    Type: String
+    Description: Enter the name of the S3 bucket in lower case and you can use hyphen (-) and numbers.
+Resources: 
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref S3BucketName
+      MetricsConfigurations:
+        - Id: EntireBucket
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+  SampleBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Id: MyPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt S3Bucket.WebsiteURL
+    Description: URL for website hosted on S3
+  S3BucketName:
+    Value: !Ref S3Bucket

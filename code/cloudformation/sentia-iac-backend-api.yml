@@ -1,0 +1,357 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template deploys the api gateway and the required permissions
+Parameters:
+  LambdaGetAllAuthorsArn:
+    Type: String
+  LambdaSaveCourseArn:
+    Type: String
+  LambdaUpdateCourseArn:
+    Type: String
+  LambdaGetAllCoursesArn:
+    Type: String
+  LambdaGetCourseArn:
+    Type: String
+  LambdaDeleteCourseArn:
+    Type: String
+Resources: 
+  RestApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: WebAppAPI
+  APITestStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref APIDeployment
+      MethodSettings:
+        - ResourcePath: /*
+          HttpMethod: '*'
+      RestApiId: !Ref RestApi
+      StageName: test
+  APIDeployment:
+    DependsOn: CoursesResourceIdGetMethod
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref RestApi
+  CoursesResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !GetAtt RestApi.RootResourceId
+      PathPart: courses
+  CoursesIdResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref CoursesResource
+      PathPart: '{id}'
+  AuthorsResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !GetAtt RestApi.RootResourceId
+      PathPart: authors
+  AuthorsResourceOptionMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      ResourceId: !Ref AuthorsResource
+      RestApiId: !Ref RestApi
+      Integration: 
+        IntegrationResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        Type: MOCK
+      MethodResponses:
+      - StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+        ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  AuthorsResourceGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        IntegrationResponses: 
+        - "StatusCode": 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaGetAllAuthorsArn}/invocations"
+          - LambdaSaveCourseArn: !Ref "LambdaGetAllAuthorsArn"
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+      ResourceId: !Ref AuthorsResource
+      RestApiId: !Ref RestApi
+  CoursesResourceGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        IntegrationResponses: 
+        - "StatusCode": 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaGetAllCoursesArn}/invocations"
+          - LambdaSaveCourseArn: !Ref "LambdaGetAllCoursesArn"
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+      ResourceId: !Ref CoursesResource
+      RestApiId: !Ref RestApi
+  CoursesResourceOptionMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      ResourceId: !Ref CoursesResource
+      RestApiId: !Ref RestApi
+      Integration: 
+        IntegrationResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        Type: MOCK
+      MethodResponses:
+      - StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+        ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  CoursesResourceIdOptionMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      ResourceId: !Ref CoursesIdResource
+      RestApiId: !Ref RestApi
+      Integration: 
+        IntegrationResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        Type: MOCK
+      MethodResponses:
+      - StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+        ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  CoursesResourceIdPutMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: PUT
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: PUT
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": |
+            {
+              "id": "$input.params('id')",
+              "title" : $input.json('$.title'),
+              "authorId" : $input.json('$.authorId'),
+              "length" : $input.json('$.length'),
+              "category" : $input.json('$.category'),
+              "watchHref" : $input.json('$.watchHref')
+            }
+        IntegrationResponses: 
+        - "StatusCode": 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaUpdateCourseArn}/invocations"
+          - LambdaSaveCourseArn: !Ref "LambdaUpdateCourseArn"
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+      ResourceId: !Ref CoursesIdResource
+      RestApiId: !Ref RestApi
+  CoursesResourceIdDeleteMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: DELETE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: DELETE
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": |
+            {
+              "id": "$input.params('id')"
+            }
+        IntegrationResponses: 
+        - "StatusCode": 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaDeleteCourseArn}/invocations"
+          - LambdaSaveCourseArn: !Ref "LambdaDeleteCourseArn"
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+      ResourceId: !Ref CoursesIdResource
+      RestApiId: !Ref RestApi
+  CoursesResourceIdGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": |
+            {
+              "id": "$input.params('id')"
+            }
+        IntegrationResponses: 
+        - "StatusCode": 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaGetCourseArn}/invocations"
+          - LambdaSaveCourseArn: !Ref "LambdaGetCourseArn"
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+      ResourceId: !Ref CoursesIdResource
+      RestApiId: !Ref RestApi
+  CoursesResourcePostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        IntegrationResponses: 
+        - "StatusCode": 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaSaveCourseArn}/invocations"
+          - LambdaSaveCourseArn: !Ref "LambdaSaveCourseArn"
+      MethodResponses:
+      - ResponseParameters:
+          method.response.header.Access-Control-Allow-Origin: true
+        StatusCode: 200
+        ResponseModels:
+          application/json: 'Empty'
+      ResourceId: !Ref CoursesResource
+      RestApiId: !Ref RestApi
+  LambdaSavePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaSaveCourseArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/courses"
+  LambdaUpdatePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaUpdateCourseArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PUT/courses/*"
+  LambdaGetAllCoursesPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaGetAllCoursesArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/courses"
+  LambdaDeletePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaDeleteCourseArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/courses/*"
+  LambdaGetCoursePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaGetCourseArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/courses/*"
+  LambdaGetAuthorsPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaGetAllAuthorsArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/authors"
+Outputs:
+  ApiEndpoint:
+    Value: !Join [ '', [ 'https://', !Ref RestApi , '.execute-api.', !Ref AWS::Region,'.amazonaws.com/test' ] ]

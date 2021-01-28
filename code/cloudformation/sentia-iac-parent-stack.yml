@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template create and deploy all of the required resources for the web application and it build and deploy the code.
+Parameters:
+  S3BucketName:
+    Type: String
+    Description: Enter the name of the S3 bucket in lower case and you can use hyphen (-) and numbers.
+  EnvironmentName:
+    Type: String
+    Default: Test
+    Description: An environment name that is prefixed to resource names
+  VpcCIDR:
+    Description: Enter the IP range (CIDR notation) for this VPC
+    Type: String
+    Default: 10.192.0.0/16
+  PrivateSubnet1CIDR:
+    Description: Enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
+    Type: String
+    Default: 10.192.20.0/24
+  PrivateSubnet2CIDR:
+    Description: Enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
+    Type: String
+    Default: 10.192.21.0/24
+Resources: 
+  NetworkInfrastructure: 
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: 'https://abdalrahman-attya-aws-cloudformation-templates.s3-eu-west-1.amazonaws.com/assignment/sentia-iac-network.yml'
+      Parameters: 
+        EnvironmentName: !Ref EnvironmentName
+        VpcCIDR: !Ref VpcCIDR
+        PrivateSubnet1CIDR: !Ref PrivateSubnet1CIDR
+        PrivateSubnet2CIDR: !Ref PrivateSubnet2CIDR
+  Frontend: 
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: 'https://abdalrahman-attya-aws-cloudformation-templates.s3-eu-west-1.amazonaws.com/assignment/sentia-iac-frontend.yml'
+      Parameters: 
+        S3BucketName: !Ref S3BucketName
+  BackendDatabase: 
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: 'https://abdalrahman-attya-aws-cloudformation-templates.s3-eu-west-1.amazonaws.com/assignment/sentia-iac-backend-database.yml'
+  BackendLogic: 
+    DependsOn: BackendDatabase
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: 'https://abdalrahman-attya-aws-cloudformation-templates.s3-eu-west-1.amazonaws.com/assignment/sentia-iac-backend-logic.yml'
+      Parameters: 
+        AuthorsDynamodbTableArn: !GetAtt BackendDatabase.Outputs.AuthorsDynamoDBTableArn 
+        CoursesDynamodbTableArn: !GetAtt BackendDatabase.Outputs.CoursesDynamoDBTableArn
+  BackendApi: 
+    DependsOn: BackendLogic
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: 'https://abdalrahman-attya-aws-cloudformation-templates.s3-eu-west-1.amazonaws.com/assignment/sentia-iac-backend-api.yml'
+      Parameters: 
+        LambdaGetAllAuthorsArn: !GetAtt BackendLogic.Outputs.LambdaGetAllAuthorsArn 
+        LambdaSaveCourseArn: !GetAtt BackendLogic.Outputs.LambdaSaveCourseArn
+        LambdaUpdateCourseArn: !GetAtt BackendLogic.Outputs.LambdaUpdateCourseArn
+        LambdaGetAllCoursesArn: !GetAtt BackendLogic.Outputs.LambdaGetAllCoursesArn
+        LambdaGetCourseArn: !GetAtt BackendLogic.Outputs.LambdaGetCourseArn
+        LambdaDeleteCourseArn: !GetAtt BackendLogic.Outputs.LambdaDeleteCourseArn
+  BuildAppCodeAndDeploy: 
+    DependsOn: BackendApi
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: 'https://abdalrahman-attya-aws-cloudformation-templates.s3-eu-west-1.amazonaws.com/assignment/sentia-iac-build-and-deploy.yml'
+      Parameters: 
+        AuthorsDynamodbTableArn: !GetAtt BackendDatabase.Outputs.AuthorsDynamoDBTableArn 
+        CoursesDynamodbTableArn: !GetAtt BackendDatabase.Outputs.CoursesDynamoDBTableArn
+        S3BucketName: !Ref S3BucketName
+        APIEndpoint: !GetAtt BackendApi.Outputs.ApiEndpoint
+    
+Outputs:
+  WebsiteURL:
+    Description: URL for website hosted on S3
+    Value: !GetAtt Frontend.Outputs.WebsiteURL
+  ApiEndpoint:
+    Description: URL for website hosted on S3
+    Value: !GetAtt BackendApi.Outputs.ApiEndpoint

@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template deploy cloudformation custom resources to handle the build and deployment of the code
+Parameters:
+  CoursesDynamodbTableArn:
+    Type: String
+  AuthorsDynamodbTableArn:
+    Type: String
+  S3BucketName:
+    Type: String
+  APIEndpoint: 
+    Type: String
+Resources: 
+  CustomActionLoadItemsToTables:
+    Type: Custom::CustomActionLoadItemsToTables
+    Properties:
+      ServiceToken: !GetAtt LambdaPutItemsInDaynamodbTable.Arn
+  LambdaPutItemsInDaynamodbTable:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaPutItemsinTablesExecutionRole.Arn
+      Runtime: python3.7
+      Timeout: 45
+      Environment:
+        Variables:
+          s3BucketName: !Ref S3BucketName
+          apiEndpointURL: !Ref APIEndpoint
+      Code: 
+        S3Bucket: abdalrahman-attya-aws-cloudformation-templates
+        S3Key: assignment/custom-lambda-v2.zip
+  LambdaPutItemsinTablesExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+              - logs:CreateLogStream
+              Resource: arn:aws:logs:*:*:*
+            - Effect: Allow
+              Action:
+              - dynamodb:PutItem
+              - dynamodb:Scan
+              Resource: 
+              - !Ref CoursesDynamodbTableArn
+              - !Ref AuthorsDynamodbTableArn
+            - Effect: Allow
+              Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:DeleteObject
+              Resource: 
+              - !Join
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - !Ref S3BucketName
+              - !Join
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - !Ref S3BucketName
+                    - /*
+
+

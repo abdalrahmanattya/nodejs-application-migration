@@ -1,0 +1,451 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template deploy lambda functions that run the application code
+Parameters:
+  AuthorsDynamodbTableArn:
+    Description: Authors Dynamodb ARN
+    Type: String
+  CoursesDynamodbTableArn:
+    Description: Courses Dynamodb ARN
+    Type: String
+Resources: 
+  LambdaGetAllAuthors:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 'Sentia-IaC-GetAllAuthors'
+      Runtime: nodejs12.x
+      Role: !GetAtt LambdaGetAuthorsExecutionRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: !Sub | 
+          const AWS = require("aws-sdk");
+          const dynamodb = new AWS.DynamoDB({
+            region: "${AWS::Region}",
+            apiVersion: "2012-08-10"
+          });
+          exports.handler = (event, context, callback) => {
+            const params = {
+              TableName: "authors"
+            };
+            dynamodb.scan(params, (err, data) => {
+              if (err) {
+                console.log(err);
+                callback(err);
+              } else {
+                const authors = data.Items.map(item => {
+                  return { id: item.id.S, firstName: item.firstName.S, lastName: item.lastName.S };
+                });
+                callback(null, authors);
+              }
+            });
+          };
+  LambdaSaveCourse:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 'Sentia-IaC-SaveCourse'
+      Runtime: nodejs12.x
+      Role: !GetAtt LambdaSaveCoursesExecutionRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: !Sub | 
+          const AWS = require("aws-sdk");
+          const dynamodb = new AWS.DynamoDB({
+            region: "${AWS::Region}",
+            apiVersion: "2012-08-10"
+          });
+
+          const replaceAll = (str, find, replace) => {
+            return str.replace(new RegExp(find, "g"), replace);
+          };
+
+          exports.handler = (event, context, callback) => {
+            const id = replaceAll(event.title, " ", "-").toLowerCase();
+            const params = {
+              Item: {
+                id: {
+                  S: id
+                },
+                title: {
+                  S: event.title
+                },
+                watchHref: {
+                  S: `http://www.pluralsight.com/courses/${!id}`
+                },
+                authorId: {
+                  S: event.authorId
+                },
+                length: {
+                  S: event.length
+                },
+                category: {
+                  S: event.category
+                }
+              },
+              TableName: "courses"
+            };
+            dynamodb.putItem(params, (err, data) => {
+              if (err) {
+                console.log(err);
+                callback(err);
+              } else {
+                callback(null, {
+                  id: params.Item.id.S,
+                  title: params.Item.title.S,
+                  watchHref: params.Item.watchHref.S,
+                  authorId: params.Item.authorId.S,
+                  length: params.Item.length.S,
+                  category: params.Item.category.S
+                });
+              }
+            });
+            };
+  LambdaUpdateCourse:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 'Sentia-IaC-UpdateCourse'
+      Runtime: nodejs12.x
+      Role: !GetAtt LambdaUpdateCoursesExecutionRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: !Sub | 
+          const AWS = require("aws-sdk");
+          const dynamodb = new AWS.DynamoDB({
+            region: "${AWS::Region}",
+            apiVersion: "2012-08-10"
+          });
+
+          exports.handler = (event, context, callback) => {
+            const params = {
+              Item: {
+                id: {
+                  S: event.id
+                },
+                title: {
+                  S: event.title
+                },
+                watchHref: {
+                  S: event.watchHref
+                },
+                authorId: {
+                  S: event.authorId
+                },
+                length: {
+                  S: event.length
+                },
+                category: {
+                  S: event.category
+                }
+              },
+              TableName: "courses"
+            };
+            dynamodb.putItem(params, (err, data) => {
+              if (err) {
+                console.log(err);
+                callback(err);
+              } else {
+                callback(null, {
+                  id: params.Item.id.S,
+                  title: params.Item.title.S,
+                  watchHref: params.Item.watchHref.S,
+                  authorId: params.Item.authorId.S,
+                  length: params.Item.length.S,
+                  category: params.Item.category.S
+                });
+              }
+            });
+          };
+  LambdaGetAllCourses:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 'Sentia-IaC-GetCourses'
+      Runtime: nodejs12.x
+      Role: !GetAtt LambdaGetAllCoursesExecutionRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: !Sub | 
+          const AWS = require("aws-sdk");
+          const dynamodb = new AWS.DynamoDB({
+            region: "${AWS::Region}",
+            apiVersion: "2012-08-10"
+          });
+          exports.handler = (event, context, callback) => {
+          const params = {
+            TableName: "courses"
+          };
+          dynamodb.scan(params, (err, data) => {
+            if (err) {
+              console.log(err);
+              callback(err);
+            } else {
+              const courses = data.Items.map(item => {
+                return {
+                  id: item.id.S,
+                  title: item.title.S,
+                  watchHref: item.watchHref.S,
+                  authorId: item.authorId.S,
+                  length: item.length.S,
+                  category: item.category.S
+                };
+              });
+              callback(null, courses);
+            }
+          });
+          };
+  LambdaGetCourse:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 'Sentia-IaC-GetCourse'
+      Runtime: nodejs12.x
+      Role: !GetAtt LambdaGetOneCourseExecutionRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: !Sub | 
+          const AWS = require("aws-sdk");
+          const dynamodb = new AWS.DynamoDB({
+            region: "${AWS::Region}",
+            apiVersion: "2012-08-10"
+          });
+          exports.handler = (event, context, callback) => {
+            const params = {
+              Key: {
+                id: {
+                  S: event.id
+                }
+              },
+              TableName: "courses"
+            };
+            dynamodb.getItem(params, (err, data) => {
+              if (err) {
+                console.log(err);
+                callback(err);
+              } else {
+                callback(null, {
+                  id: data.Item.id.S,
+                  title: data.Item.title.S,
+                  watchHref: data.Item.watchHref.S,
+                  authorId: data.Item.authorId.S,
+                  length: data.Item.length.S,
+                  category: data.Item.category.S
+                });
+              }
+            });
+          };
+  LambdaDeleteCourse:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: 'Sentia-IaC-DeleteCourse'
+      Runtime: nodejs12.x
+      Role: !GetAtt LambdaDeleteOneCourseExecutionRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: !Sub | 
+          const AWS = require("aws-sdk");
+          const dynamodb = new AWS.DynamoDB({
+            region: "${AWS::Region}",
+            apiVersion: "2012-08-10"
+          });
+          exports.handler = (event, context, callback) => {
+            const params = {
+              Key: {
+                id: {
+                  S: event.id
+                }
+              },
+              TableName: "courses"
+            };
+            dynamodb.deleteItem(params, (err, data) => {
+              if (err) {
+                console.log(err);
+                callback(err);
+              } else {
+                callback(null, data);
+              }
+            });
+          };
+  LambdaGetAuthorsExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+              - logs:CreateLogStream
+              Resource: arn:aws:logs:*:*:*
+            - Effect: Allow
+              Action:
+              - dynamodb:Scan
+              Resource: !Ref AuthorsDynamodbTableArn
+
+  LambdaSaveCoursesExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+              - logs:CreateLogStream
+              Resource: arn:aws:logs:*:*:*
+            - Effect: Allow
+              Action:
+              - dynamodb:PutItem
+              Resource: !Ref CoursesDynamodbTableArn
+  LambdaUpdateCoursesExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+              - logs:CreateLogStream
+              Resource: arn:aws:logs:*:*:*
+            - Effect: Allow
+              Action:
+              - dynamodb:PutItem
+              Resource: !Ref CoursesDynamodbTableArn
+  LambdaGetAllCoursesExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+              - logs:CreateLogStream
+              Resource: arn:aws:logs:*:*:*
+            - Effect: Allow
+              Action:
+              - dynamodb:Scan
+              Resource: !Ref CoursesDynamodbTableArn
+  LambdaGetOneCourseExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+              - logs:CreateLogStream
+              Resource: arn:aws:logs:*:*:*
+            - Effect: Allow
+              Action:
+              - dynamodb:GetItem
+              Resource: !Ref CoursesDynamodbTableArn
+  LambdaDeleteOneCourseExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+              - logs:CreateLogStream
+              Resource: arn:aws:logs:*:*:*
+            - Effect: Allow
+              Action:
+              - dynamodb:DeleteItem
+              Resource: !Ref CoursesDynamodbTableArn
+Outputs:
+  LambdaGetAllAuthorsArn:
+    Value: !GetAtt LambdaGetAllAuthors.Arn
+  LambdaSaveCourseArn:
+    Value: !GetAtt LambdaSaveCourse.Arn
+  LambdaUpdateCourseArn:
+    Value: !GetAtt LambdaUpdateCourse.Arn
+  LambdaGetAllCoursesArn:
+    Value: !GetAtt LambdaGetAllCourses.Arn
+  LambdaGetCourseArn:
+    Value: !GetAtt LambdaGetCourse.Arn
+  LambdaDeleteCourseArn:
+    Value: !GetAtt LambdaDeleteCourse.Arn
+  
+
+
+
+
+  

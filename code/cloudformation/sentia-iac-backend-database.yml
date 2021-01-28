@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template deploy dynamodb tables
+Parameters:
+  ReadCapacityUnits:
+    Description: Provisioned read throughput
+    Type: Number
+    Default: '1'
+    MinValue: '1'
+    MaxValue: '5'
+    ConstraintDescription: must be between 1 and 5
+  WriteCapacityUnits:
+    Description: Provisioned write throughput
+    Type: Number
+    Default: '1'
+    MinValue: '1'
+    MaxValue: '5'
+    ConstraintDescription: must be between 1 and 5
+Resources:
+  CoursesDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: courses
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: !Ref ReadCapacityUnits
+        WriteCapacityUnits: !Ref WriteCapacityUnits
+  AuthorsDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: authors
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: !Ref ReadCapacityUnits
+        WriteCapacityUnits: !Ref WriteCapacityUnits
+Outputs:
+  CoursesDynamoDBTableArn:
+    Description: A reference to the Courses DynamoDB Table
+    Value: !GetAtt CoursesDynamoDBTable.Arn
+  AuthorsDynamoDBTableArn:
+    Description: A reference to the Authors DynamoDB Table
+    Value: !GetAtt AuthorsDynamoDBTable.Arn
+
