@@ -1,7 +1,6 @@
-# Sentia Assignment Deliverables 
-The purpose of this repository is to provide the deliverables of the assignment related to the cloud systems consultant role.
+# Deliverables 
+The purpose of this repository is to provide the deliverables of the NodeJS application migration and transformation.
 ## Tables of Content
-- [Overview](#Overview)
 - [Client Requirements](#Client-Requirements)
 - [Transformation](#Transformation)
 	 - [Current Architecture](#Current-Architecture)
@@ -29,10 +28,6 @@ The purpose of this repository is to provide the deliverables of the assignment 
 - [IaC MVP](#IaC)
 	- [Architecture](#Architecture)
 	- [Deploy](#Deploy)
-- [Time Log & Followed Processes](#Time-Log-&-Followed-Processes)
-## Overview
-The solution of the assignment is divided between the deliverables in github and the presentation.
-The deliverables in github will include less detailed information about why I have taken a certain decision or chosen a service/tool/design over another. Instead, this information will be kept for the presentation.
 
 ## Client Requirements
 General Requirements:
@@ -211,31 +206,6 @@ Once the stack is complete, click the website url in the output section of the t
 Everything should work fine. 
 
 terminate the stack.
-
-## Time Log & Followed Processes
-Please Note That:
-- The dates aren't 100% accurate.
-- The order is accurate. 
-
-START - 08/01
-
-08/01
-
-- Read through the assignment
-- Break down the assignment into smaller tasks
-- How to stand out from other AWS partners? 
-- EC2 vs Serverless? 
-- Set assumptions and business objectives
-
-13/01
-
-- Application architecture on paper => Started 13/01
-- Draw diagrams  => Started 15/01
-- Deliver on github  => Started 18/01
-- Presentation  => Started 20/01
-- IaC => Started 22/01
-
-END - 28/01 
 
 
 
